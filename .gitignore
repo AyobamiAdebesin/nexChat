@@ -1,11 +1,13 @@
 .DS_Store
 node_modules
 /dist
-
+/api/twibbly_env
 
 # local env files
 .env.local
 .env.*.local
+/api/v1/.flaskenv
+/api/v1/.env
 
 # Log files
 npm-debug.log*
