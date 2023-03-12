@@ -6,8 +6,8 @@ node_modules
 # local env files
 .env.local
 .env.*.local
-/api/v1/.flaskenv
-/api/v1/.env
+backend/api/v1/.flaskenv
+backend/api/v1/.env
 
 # Log files
 npm-debug.log*
