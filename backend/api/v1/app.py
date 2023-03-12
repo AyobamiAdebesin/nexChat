@@ -14,6 +14,10 @@ def index():
     """ Index route """
     return jsonify('Hello World')
 
+@app.route('/home')
+def home():
+    """ Return home page """
+    return jsonify({'Hello': 'World'})
 
 if __name__ == "__main__":
     app.run()
