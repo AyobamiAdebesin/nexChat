@@ -4,6 +4,7 @@ import os
 import pusher
 import sys
 import uuid
+from models import storage
 from uuid import uuid4
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
