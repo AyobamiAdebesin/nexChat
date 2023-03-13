@@ -61,6 +61,17 @@ class DBStorage:
         if obj:
             self.__session.delete(obj)
 
+    def delete_by_username(self, username):
+        """ Delete a user by username """
+        from backend.models.users import User
+        try:
+            user = self.find_user_by(username=username)
+        except NoResultFound:
+            return
+        else:
+            self.delete(user)
+            self.save()
+
     def reload(self):
         """ Create all tables in the database and the current database session
             from the engine """
