@@ -19,5 +19,11 @@ def home():
     """ Return home page """
     return jsonify({'Hello': 'World'})
 
+@app.teardown_appcontext
+def teardown_appcontext(exception):
+    """ Closes the storage on teardown """
+    storage.close()
+
+
 if __name__ == "__main__":
     app.run()
