@@ -4,8 +4,10 @@ import flask
 import os
 #import dotenv
 import pusher
+from backend.models import storage
 from flask import Flask, request, jsonify
-from models.engine.db_storage import DBStorage
+from backend.models.users import User
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -17,22 +19,21 @@ def index():
     return jsonify('Hello World')
 
 
-@app.route('/api/v1/register', methods=['POST'])
+@app.route('/api/v1/register', methods=['POST'], strict_slashes=False)
 def register():
     """ Register route """
-    data = request.get_json()
-    username = data['username']
-    password = generate_password_hash(data['password'])
+    username = request.form.get('username')
+    password = request.form.get('password')
     
     try:
-        user = User(username=username, password=password)
-        storage.new(user)
-        storage.save()
-    except:
+        storage.find_user_by(username=username)
+    except NoResultFound:
+        user = User(username=username, password=generate_password_hash(password))
+        user.save()
+        return jsonify({'success': 'User created'}), 201
+    else:
         return jsonify({'error': 'User already exists'}), 400
-    return jsonify({'success': 'User created'}), 201
-
-@app.route('/login')
+        
 
 
 @app.teardown_appcontext
