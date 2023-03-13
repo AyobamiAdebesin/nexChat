@@ -3,12 +3,14 @@
 import pusher
 from models.base_model import BaseModel, Base
 from uuid import uuid4
-from sqlalchemy import Column, String
+from sqlalchemy import Column, Text
 from sqlalchemy.orm import relationship
 
-class Messages(BaseModel, Base):
+
+class Message(BaseModel, Base):
     """ Defines a message object in the app """
-    __tablename__ = 'messages'
-    from_user = Column(String(128), nullable=False)
-    to_user = Column(String(128), nullable=False)
+    __tablename__ = 'message'
+    message = Column(Text(), nullable=False)
+    from_user = Column(String(128), ForeignKey('users.id'), nullable=False)
+    to_user = Column(String(128), ForeignKey('users.id'), nullable=False)
     channel_id = Column(String(128), nullable=False)

@@ -13,11 +13,14 @@ from sqlalchemy import Text, Table, MetaData
 
 Base = declarative_base()
 
+
 class BaseModel:
     """ Base Model """
     id = Column(String(60), primary_key=True, nullable=False)
-    created_at = Column(DateTime(timezone=False), nullable=False, default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=False), nullable=False, default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=False),
+                        nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime(timezone=False),
+                        nullable=False, default=datetime.utcnow)
 
     def __init__(self, *args, **kwargs):
         """ Initializes model """
@@ -29,10 +32,13 @@ class BaseModel:
         elif '__class__' in kwargs:
             # If kwargs is not None and does not contain the '__class__' key,
             # then we are creating an instance from a dictionary
-            # passed into the constructor. We update the 'updated_at' and 'created_at'
-            # attributes to be datetime objects instead of strings.
-            kwargs['updated_at'] = datetime().strptime(kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime().strptime(kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            # passed into the constructor. We update the 'updated_at'
+            # and 'created_at' attributes to be datetime objects
+            # instead of strings.
+            kwargs['updated_at'] = datetime().strptime(
+                kwargs['updated_at'], '%Y-%m-%dT%H:%M:%S.%f')
+            kwargs['created_at'] = datetime().strptime(
+                kwargs['created_at'], '%Y-%m-%dT%H:%M:%S.%f')
 
             del kwargs['__class__']
             self.__dict__.update(kwargs)
@@ -41,7 +47,7 @@ class BaseModel:
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
             self.__dict__.update(kwargs)
-    
+
     def __str__(self):
         """ Return string representation """
         dictionary = {}
