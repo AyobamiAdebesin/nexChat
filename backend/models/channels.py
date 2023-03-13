@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Channels Model """
 import pusher
-from models.base_model import BaseModel, Base
+from backend.models.base_model import BaseModel, Base
 from uuid import uuid4
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
