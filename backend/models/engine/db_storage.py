@@ -3,7 +3,8 @@
 import os
 import MySQLdb
 from dotenv import load_dotenv
-
+from sqlalchemy.orm.exc import NoResultFound
+from typing import Mapping, List, Any, Union
 
 load_dotenv()
 
@@ -23,12 +24,12 @@ class DBStorage:
                                               os.getenv('TWIBBLY_MYSQL_DB')),
                                       pool_pre_ping=True)
 
-    def all(self, cls=None):
+    def all(self, cls=None) -> Mapping[str, Any]:
         """ Query on the current database session all objects of the
             class name passed as argument """
-        from models.users import User
-        from models.channels import Channel
-        from models.messages import Message
+        from backend.models.users import User
+        from backend.models.channels import Channel
+        from backend.models.messages import Message
 
         classes = [User, Channel, Message]
         new_dict = {}
@@ -46,9 +47,9 @@ class DBStorage:
     def new(self, obj):
         """ Add the object to the current database session """
         from sqlalchemy.orm import sessionmaker
-        from models.channels import Channel
-        from models.messages import Message
-        from models.users import User
+        from backend.models.channels import Channel
+        from backend.models.messages import Message
+        from backend.models.users import User
         self.__session.add(obj)
 
     def save(self):
@@ -64,10 +65,10 @@ class DBStorage:
         """ Create all tables in the database and the current database session
             from the engine """
         from sqlalchemy.orm import sessionmaker, scoped_session
-        from models.channels import Channel
-        from models.messages import Message
-        from models.users import User
-        from models.base_model import BaseModel, Base
+        from backend.models.channels import Channel
+        from backend.models.messages import Message
+        from backend.models.users import User
+        from backend.models.base_model import BaseModel, Base
 
         Base.metadata.create_all(self.__engine)
         session_factory = sessionmaker(bind=self.__engine,
@@ -85,6 +86,16 @@ class DBStorage:
             key = "{}.{}".format(cls, id)
             return self.all().get(key)
         return None
+    
+    def find_user_by(self, **kwargs):
+        """ Find a user by a given attribute """
+        from backend.models.users import User
+        if kwargs:
+            for user in self.all(User).values():
+                for key, value in kwargs.items():
+                    if getattr(user, key) == value:
+                        return user
+        raise NoResultFound
 
     def count(self, cls=None):
         """ Count the number of objects in storage """
