@@ -12,6 +12,4 @@ class User(BaseModel, Base):
     __tablename__ = 'users'
     username = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
-    user_profile = relationship('UserProfile', backref='users', uselist=False)
-    messages = relationship('Message', backref='users', cascade='all, delete')
-    channels = relationship('Channel', backref='users', cascade='all, delete')
+    
