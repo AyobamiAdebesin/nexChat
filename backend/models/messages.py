@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Messages Model """
 import pusher
-from models.base_model import BaseModel, Base
+from backend.models.base_model import BaseModel, Base
 from uuid import uuid4
 from sqlalchemy import Column, Text, String, ForeignKey
 from sqlalchemy.orm import relationship
