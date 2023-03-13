@@ -5,6 +5,7 @@ import os
 from flask import Flask, request, jsonify
 import dotenv
 import pusher
+from models import storage
 
 
 app = Flask(__name__)
