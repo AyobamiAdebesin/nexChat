@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """ DataBase Storage """
+import os
+import MySQLdb
 from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class DBStorage:
@@ -25,7 +30,7 @@ class DBStorage:
         from models.channels import Channel
         from models.messages import Message
 
-        classses = [User, Channel, Message]
+        classes = [User, Channel, Message]
         new_dict = {}
         if cls:
             for obj in self.__session.query(cls).all():
