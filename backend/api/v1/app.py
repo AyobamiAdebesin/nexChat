@@ -31,12 +31,13 @@ def register():
     """ Register route """
     username = request.form.get('username')
     password = request.form.get('password')
+    email = request.form.get('email')
 
     try:
         storage.find_user_by(username=username)
     except NoResultFound:
         user = User(username=username,
-                    password=generate_password_hash(password))
+                    password=generate_password_hash(password), email=email)
         user.save()
         return jsonify({'success': 'User created'}), 201
     else:
@@ -48,7 +49,6 @@ def login():
     """ Logs in a user """
     username = request.form.get('username')
     password = request.form.get('password')
-
     try:
         user = storage.find_user_by(username=username)
     except NoResultFound:
@@ -62,7 +62,7 @@ def login():
 
 #Protect a route with jwt_required, which will kick out requests
 #without a valid JWT present.
-@app.route("/protected", methods=["GET"])
+@app.route("/api/v1/protected", methods=["GET"])
 @jwt_required()
 def protected():
     # Access the identity of the current user with get_jwt_identity
