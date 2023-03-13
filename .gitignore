@@ -6,10 +6,8 @@ node_modules
 # local env files
 .env.local
 .env.*.local
-backend/api/v1/.flaskenv
-backend/api/v1/.env
-backend/models/engine/.env
-backend/models/engine/setup_twibbly_db.sql
+.env
+backend/setup_twibbly_db.sql
 
 # Log files
 npm-debug.log*
