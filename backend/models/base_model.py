@@ -4,7 +4,6 @@ import os
 import pusher
 import sys
 import uuid
-from models import storage
 from uuid import uuid4
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
@@ -60,7 +59,7 @@ class BaseModel:
 
     def save(self):
         """ Updates 'updated_at' with current time when instance is changed """
-        from models import storage
+        from backend.models import storage
         self.updated_at = datetime.now()
         storage.new(self)
         storage.save()
@@ -79,5 +78,5 @@ class BaseModel:
 
     def delete(self):
         """Delete an instance"""
-        from models import storage
+        from backend.models import storage
         storage.delete(self)
