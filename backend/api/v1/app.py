@@ -119,6 +119,75 @@ def request_chat():
     }), 201
 
 
+@app.route('/api/v1/pusher/auth', methods=['POST'], strict_slashes=False)
+def pusher_authentication():
+    """ Pusher authentication route """
+    auth_handler = pusher.authenticate(
+        channel=request.form['channel_name'],
+        socket_id=request.form['socket_id']
+    )
+    return jsonify(auth_handler)
+
+
+@app.route('api/v1/send_message', methods=['POST'], strict_slashes=False)
+@jwt_required
+def send_message():
+    """ Sends a message to a channel """
+    from_user = request.form.get('from_user', '')
+    to_user = request.form.get('to_user', '')
+    message = request.form.get('message', '')
+    channel_name = request.form.get('channel_name', '')
+
+    # Save the message to the database
+    new_message = Message()
+    new_message.from_user = from_user
+    new_message.to_user = to_user
+    new_message.message = message
+    new_message.channel_id = channel_name
+    new_message.save()
+
+    message = {
+        'from_user': from_user,
+        'to_user': to_user,
+        'message': message,
+        'channel_name': channel_name
+    }
+    pusher.trigger(channel_name, 'new_message', message)
+    return jsonify({
+        'status': 'success',
+        'message': 'Message sent'
+    }), 200
+
+    # channel_name = request.form.get('channel_name')
+    # message = request.form.get('message')
+    # username = get_jwt_identity()
+    # data = {
+    #     'username': username,
+    #     'message': message
+    # }
+    # pusher.trigger(channel_name, 'new_message', data)
+
+
+@app.route('api/v1/users', methods=['GET'])
+@jwt_required
+def get_users():
+    """ Returns all users """
+    users = storage.all(User).values()
+    return jsonify([{"id": user.id, "username": user.username} for user in users]), 200
+
+
+@app.route('api/v1/get_message/<channel_name>', methods=['GET'])
+@jwt_required
+def user_messages(channel_name):
+    """ Returns all messages in a channel """
+    messages = storage.find_messages_by(channel_id=channel_name)
+    return jsonify([{
+        'from_user': message.from_user,
+        'to_user': message.to_user,
+        'message': message.message,
+        'channel_name': message.channel_id
+    } for message in messages]), 200
+
 @app.teardown_appcontext
 def teardown_appcontext(exception):
     """ Closes the storage on teardown """
