@@ -7,7 +7,7 @@ node_modules
 .env.local
 .env.*.local
 .env
-backend/setup_twibbly_db.sql
+setup_twibbly_db.sql
 
 # Log files
 npm-debug.log*
