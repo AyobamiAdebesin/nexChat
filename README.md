@@ -1,4 +1,4 @@
-# twibbly
+# nexChat
 
 ## Project setup
 ```
