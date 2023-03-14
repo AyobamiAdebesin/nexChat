@@ -1,5 +1,5 @@
 # nexChat
-![Example screenshot](./images/nexChat.png.png)
+![Example screenshot](./images/nexChat.png)
 
 ## Project setup
 ```
