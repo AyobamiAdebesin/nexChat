@@ -10,6 +10,6 @@ from sqlalchemy.orm import relationship
 class User(BaseModel, Base):
     """ Defines a user in the app """
     __tablename__ = 'users'
+    email = Column(String(128), nullable=False)
     username = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
-    

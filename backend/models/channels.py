@@ -7,11 +7,10 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
 
+
 class Channel(BaseModel, Base):
     """ Defines a channel object in the app """
     __tablename__ = 'channels'
-    name = Column(String(128), nullable=False)
+    name = Column(String(256), nullable=False)
     from_user = Column(String(128), ForeignKey('users.id'), nullable=False)
     to_user = Column(String(128), ForeignKey('users.id'), nullable=False)
-
-
