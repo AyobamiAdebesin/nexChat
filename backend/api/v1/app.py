@@ -3,17 +3,18 @@
 import flask
 import os
 import dotenv
+from dotenv import load_dotenv
 import pusher
 from backend.models import storage
 from flask import Flask, request, jsonify
 from backend.models.users import User
 from sqlalchemy.orm.exc import NoResultFound
+from backend.models.channels import Channel
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
-
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = os.getenv('TWIBBLY_JWT_SECRET')
@@ -28,7 +29,7 @@ pusher = pusher.Pusher(
     ssl=True)
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False, methods=['GET'])
 def index():
     """ Index route """
     return jsonify('Hello World')
@@ -91,14 +92,10 @@ def request_chat():
     from_user_channel = f"private-notification_user_{from_user}"
 
     # Check if a channel already exists between the two users
-    try:
-        channel = storage.find_channel_by(from_user=from_user, to_user=to_user)
-    except NoResultFound:
+    channel = storage.find_channel_by(from_user=from_user, to_user=to_user)
+    if channel is None:
         channel_name = f"private-chat_{from_user}_{to_user}"
-        new_channel = Channel()
-        new_channel.from_user = from_user
-        new_channel.to_user = to_user
-        new_channel.name = channel_name
+        new_channel = Channel(name=channel_name, from_user=from_user, to_user=to_user)
         new_channel.save()
     else:
         channel_name = channel.name
@@ -129,8 +126,8 @@ def pusher_authentication():
     return jsonify(auth_handler)
 
 
-@app.route('api/v1/send_message', methods=['POST'], strict_slashes=False)
-@jwt_required
+@app.route('/api/v1/send_message', methods=['POST'], strict_slashes=False)
+@jwt_required()
 def send_message():
     """ Sends a message to a channel """
     from_user = request.form.get('from_user', '')
@@ -168,16 +165,16 @@ def send_message():
     # pusher.trigger(channel_name, 'new_message', data)
 
 
-@app.route('api/v1/users', methods=['GET'])
-@jwt_required
+@app.route('/api/v1/users', methods=['GET'])
+@jwt_required()
 def get_users():
     """ Returns all users """
     users = storage.all(User).values()
     return jsonify([{"id": user.id, "username": user.username} for user in users]), 200
 
 
-@app.route('api/v1/get_message/<channel_name>', methods=['GET'])
-@jwt_required
+@app.route('/api/v1/get_message/<channel_name>', methods=['GET'])
+@jwt_required()
 def user_messages(channel_name):
     """ Returns all messages in a channel """
     messages = storage.find_messages_by(channel_id=channel_name)
