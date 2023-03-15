@@ -3,6 +3,7 @@
 import os
 import MySQLdb
 from dotenv import load_dotenv
+from backend.models.users import User
 from sqlalchemy.orm.exc import NoResultFound
 from typing import Mapping, List, Any, Union
 
@@ -98,7 +99,7 @@ class DBStorage:
             return self.all().get(key)
         return None
 
-    def find_user_by(self, **kwargs):
+    def find_user_by(self, **kwargs) -> User:
         """ Find a user by a given attribute """
         from backend.models.users import User
         if kwargs:

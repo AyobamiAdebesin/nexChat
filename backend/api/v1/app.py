@@ -95,17 +95,18 @@ def request_chat():
     channel = storage.find_channel_by(from_user=from_user, to_user=to_user)
     if channel is None:
         channel_name = f"private-chat_{from_user}_{to_user}"
-        new_channel = Channel(name=channel_name, from_user=from_user, to_user=to_user)
+        new_channel = Channel(
+            name=channel_name, from_user=from_user, to_user=to_user)
         new_channel.save()
     else:
         channel_name = channel.name
-        data = {
-            "from_user": from_user,
-            "to_user": to_user,
-            "from_user_notification_channel": from_user_channel,
-            "to_user_notification_channel": to_user_channel,
-            "channel_name": channel_name
-        }
+    data = {
+        "from_user": from_user,
+        "to_user": to_user,
+        "from_user_notification_channel": from_user_channel,
+        "to_user_notification_channel": to_user_channel,
+        "channel_name": channel_name
+    }
 
     # Trigger an event on the to_user's notification channel
     pusher.trigger(to_user_channel, 'new_chat', data)
@@ -117,6 +118,7 @@ def request_chat():
 
 
 @app.route('/api/v1/pusher/auth', methods=['POST'], strict_slashes=False)
+@jwt_required()
 def pusher_authentication():
     """ Pusher authentication route """
     auth_handler = pusher.authenticate(
@@ -184,6 +186,7 @@ def user_messages(channel_name):
         'message': message.message,
         'channel_name': message.channel_id
     } for message in messages]), 200
+
 
 @app.teardown_appcontext
 def teardown_appcontext(exception):
