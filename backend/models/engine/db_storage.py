@@ -117,14 +117,15 @@ class DBStorage:
     def find_channel_by(self, from_user, to_user):
         """ Find a channel by a given attribute """
         from backend.models.channels import Channel
+
         # Search for a channel with the given users
         # The users can be in any order. From the perspective of
         # the database, the channel is the same regardless of the
         # order of the users
-        try:
-            channel = self.__session.query(Channel).filter_by(Channel.from_user.in_([from_user, to_user])) \
-            .filter_by(Channel.to_user.in_([from_user, to_user])) \
-            .first()
-        except Exception():
-            raise NoResultFound
-        return channel
+        for channel in self.all(Channel).values():
+            if (channel.from_user == from_user and
+                    channel.to_user == to_user):
+                return channel
+            if (channel.from_user == to_user and
+                    channel.to_user == from_user):
+                return channel
